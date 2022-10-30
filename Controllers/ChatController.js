@@ -22,4 +22,15 @@ module.exports.userChats = async (req, res) => {
     } catch {
         res.status(500).json({ success: false, message: "Internal server error", err })
     }
+};
+
+module.exports.findChat = async (req, res) => {
+    try {
+        const chat = await ChatModel.findOne({
+            members: { $all: [req.params.firstId, req.params.secondId] }
+        })
+        res.status(200).json({ success: true, message: "Chat fetched successfully", chat })
+    } catch {
+        res.status(500).json({ success: false, message: "Internal server error", err })
+    }
 }
