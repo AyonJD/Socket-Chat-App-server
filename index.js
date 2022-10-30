@@ -4,7 +4,8 @@ const bodyParser = require('body-parser');
 require('dotenv').config();
 
 const ChatRoute = require('./Routes/ChatRoute');
-const { connectToServer } = require('./Utils/dbConnect');
+const UserRoute = require('./Routes/UserRoute');
+const { default: mongoose } = require('mongoose');
 
 const PORT = process.env.PORT || 5000;
 const app = express();
@@ -19,23 +20,23 @@ app.options('*', cors(corsFonfig));
 app.use(bodyParser.json());
 
 // Database Connection
-connectToServer(err => {
-    if (!err) {
-        app.listen(PORT, () => {
-            console.log(`Server is running on port: ${PORT}`);
-        });
-    } else {
-        console.log(err);
-    }
+mongoose.connect(process.env.DATABASE_LOCAL).then(() => console.log("Database connected successfully"))
+    .catch(err => console.log(err));
+
+app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+
+
+// Routes
+app.get("/", (req, res) => {
+    res.send("Server is running");
 })
+app.use('/chat', ChatRoute);
+app.use('/user', UserRoute);
 
 //All
 app.all("*", (req, res) => {
     res.status(404).json({ message: "Route not found" });
 })
-
-// Routes
-app.use('/chat', ChatRoute);
 
 process.on('uncaughtException', err => {
     console.log(err);
