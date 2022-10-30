@@ -5,6 +5,7 @@ require('dotenv').config();
 
 const ChatRoute = require('./Routes/ChatRoute');
 const UserRoute = require('./Routes/UserRoute');
+const MessageRoute = require('./Routes/MessageRoute');
 const { default: mongoose } = require('mongoose');
 
 const PORT = process.env.PORT || 5000;
@@ -32,6 +33,7 @@ app.get("/", (req, res) => {
 })
 app.use('/chat', ChatRoute);
 app.use('/user', UserRoute);
+app.use('/message', MessageRoute);
 
 //All
 app.all("*", (req, res) => {
