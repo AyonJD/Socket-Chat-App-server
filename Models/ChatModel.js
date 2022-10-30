@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 
-const ChatSchema = mongoose.Schema({
+const ChatSchema = new mongoose.Schema({
     members: {
         type: Array
     },
-}, { timestamp: true });
+}, { timestamps: true });
 
 const ChatModel = mongoose.model("Chat", ChatSchema);
 
