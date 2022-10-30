@@ -11,4 +11,15 @@ module.exports.createChat = async (req, res) => {
     } catch (err) {
         res.status(500).json({ success: false, message: "Internal server error", err })
     }
+};
+
+module.exports.userChats = async (req, res) => {
+    try {
+        const chat = await ChatModel.find({
+            members: { $in: [req.params.userId] }
+        })
+        res.status(200).json({ success: true, message: "Chat fetched successfully", chat })
+    } catch {
+        res.status(500).json({ success: false, message: "Internal server error", err })
+    }
 }
