@@ -31,9 +31,9 @@ app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
 app.get("/", (req, res) => {
     res.send("Server is running");
 })
-app.use('/chat', ChatRoute);
-app.use('/user', UserRoute);
-app.use('/message', MessageRoute);
+app.use('/api/v1/chat', ChatRoute);
+app.use('/api/v1/auth/user', UserRoute);
+app.use('/api/v1/message', MessageRoute);
 
 //All
 app.all("*", (req, res) => {
