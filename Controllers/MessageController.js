@@ -11,7 +11,7 @@ module.exports.addMessage = async (req, res) => {
         const result = await newMessage.save();
         res.status(200).json({ success: true, message: "Message created successfully", result });
     } catch (err) {
-        res.status(500).json({ success: false, message: "Internal server error", err });
+        res.status(500).json({ success: false, message: "Internal server error", error: err.message });
     }
 };
 
@@ -20,6 +20,6 @@ module.exports.getMessages = async (req, res) => {
         const result = await MessageModal.find({ chatId: req.params.chatId });
         res.status(200).json({ success: true, message: "Messages fetched successfully", result });
     } catch (err) {
-        res.status(500).json({ success: false, message: "Internal server error", err });
+        res.status(500).json({ success: false, message: "Internal server error", error: err.message });
     }
 };
