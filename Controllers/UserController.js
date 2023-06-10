@@ -27,24 +27,40 @@ module.exports.getUser = async (req, res) => {
     }
 };
 
-module.exports.getSingleUser = async (req, res) => {
+module.exports.excludeCurrentUser = async (req, res) => {
     try {
-        const { username, email, password } = req.body;
-        const user = await UserModel.findOne({ $or: [{ username }, { email }] });
+        const user = await UserModel.find({ _id: { $ne: req.params.userId } });
+        res.status(200).json({ success: true, message: "User fetched successfully", result: user });
+    } catch (err) {
+        res.status(500).json({ success: false, message: "Internal server error", error: err.message });
+    }
+};
+
+module.exports.loginUser = async (req, res) => {
+    try {
+        const { username_or_email, password } = req.body;
+        const user = await UserModel.findOne({ $or: [{ username: username_or_email }, { email: username_or_email }] });
+
+        if (!user) {
+            throw new Error(400, 'User not found')
+        }
         const id = user._id.toString().split('"')[0];
+
+        const storedPassword = user?.password
+        const passwordMatch = storedPassword === password
+
+        if (!passwordMatch) {
+            throw new Error(400, 'Invalid password')
+        }
 
         if (user) {
             const { username, email } = user;
-            if (user.password === password) {
-                const accessToken = jwt.sign(req.body, process.env.TOKEN, { expiresIn: "1h" });
-                res.status(200).json({ success: true, message: "Login successfully", token: accessToken, result: { id, username, email } });
-            } else {
-                res.status(401).json({ success: false, message: "Invalid password" });
-            }
+            const accessToken = jwt.sign(req.body, process.env.TOKEN, { expiresIn: "1h" });
+            res.status(200).json({ success: true, message: "Login successfully", token: accessToken, result: { id, username, email } });
         } else {
             res.status(404).json({ success: false, message: "User not found" });
         }
     } catch (err) {
-        res.status(500).json({ success: false, message: "Internal server error", error: err.message });
+        res.status(500).json({ success: false, message: "Internal server error", error: err });
     }
 }
